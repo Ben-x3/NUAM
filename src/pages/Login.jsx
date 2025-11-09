@@ -34,21 +34,49 @@ export default function Login() {
         <section className="bg-[var(--nar)] grid place-items-center p-8">
 
           {/* la tarjeta esa */}
-          <div className="relative h-[500px] w-[500px] max-w-sm bg-white rounded-2xl shadow-xl  ring-black/5 p-6 pt-10">
+          <div className="relative w-full h-[500px] max-w-md bg-white rounded-2xl shadow-xl  p-8 md:p-10 pt-12">
             {/* avatar */}
-            <div className="relative -top-5 left-1/2 -translate-x-1/2
-                            h-12 w-12 rounded-full grid place-items-center
-                            bg-[var(--nar)] text-slate-900">
+            <section className="p-5"></section>
+            <div className="relative -top-6 left-1/2 -translate-x-1/2
+                            h-16 w-16 rounded-full grid place-items-center
+                            bg-[var(--nar)]">
               <UserIcon className="h-6 w-6" />
             </div>
               
-              <div className="flex flex-col gap-3">
-                <input className="border rounded px-3 py-2" placeholder="Correo" />
-                <input className="border rounded px-3 py-2" type="password" placeholder="Contraseña" />
-                <button className="mt-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded py-2">
-                  Entrar
-                </button>
+              <div className="text-center mt-6 space-y-4">
+                <input
+                  className="w-full rounded border border-slate-300 bg-white px-3 py-2
+                            text-slate-800 placeholder:text-slate-400
+                            focus:outline-none focus:ring-2 focus:ring-[var(--nar)]"
+                  placeholder="Correo"
+                  type="email"
+                />
+                <section className="p-1"></section>
+                <input
+                  className="w-full rounded border border-slate-300 bg-white px-3 py-2
+                            text-slate-800 placeholder:text-slate-400
+                            focus:outline-none focus:ring-2 focus:ring-[var(--nar)]"
+                  placeholder="Contraseña"
+                  type="password"
+                />
               </div>
+                <section className="p-3"></section>
+              <div className="flex justify-end">
+                <a href="#" className="text-[13px] text-[var(--nar)] hover:underline">
+                  ¿Olvidó su contraseña?
+                  <section className="p-3"></section>
+                </a>
+              </div>
+              <button
+                type="submit"
+                className="w-full rounded bg-[var(--nar)] py-2.5 text-white font-medium
+                          hover:bg-[var(--nar)] transition-colors"
+              >
+                Iniciar Sesión
+              </button>
+
+
+
           </div>
 
         </section>

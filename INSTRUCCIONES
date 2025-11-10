@@ -17,8 +17,10 @@ scr = tiene todo el codigo
 assets = imagenes
         import logo from './assets/logo.png'
 
----
+--- 
 npm install antd
+
+npm install react-data-table-component
 ---
 COLOCAR ENCIMA DE TODOS los head
 <script src="https://cdn.tailwindcss.com"></script>

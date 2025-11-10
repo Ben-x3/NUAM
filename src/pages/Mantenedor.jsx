@@ -1,143 +1,180 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import DataTable from "react-data-table-component";
+import { initialCalificaciones } from "../data/calificaciones";
+import UserIcon from "../components/UserIcon";
 import { useNavigate } from "react-router-dom";
-import Logo_Nuam from "../assets/Logo_Nuam.png";
-import Logo_Inacap from "../assets/Logo_Inacap.png";
-import UserIcon from "../components/UserIcon";   // Avatar (puedes usar el tuyo
 
 export default function Mantenedor() {
-  const [filters, setFilters] = useState({
-    mercado: "",
-    origen: "",
-    periodo: "",
-  });
+  const [data, setData] = useState([]);
+  const navigate = useNavigate();
 
-  // Simulando los valores en la tabla
-  const rows = [
-    { ejercicio: "2021", instrumento: "Bono", fechaPago: "2021-12-01", descripcion: "Descripción 1", secuencia: "A", factor: "8" },
-    { ejercicio: "2020", instrumento: "Acción", fechaPago: "2020-11-15", descripcion: "Descripción 2", secuencia: "B", factor: "15" },
-    { ejercicio: "2019", instrumento: "Bonos", fechaPago: "2019-10-20", descripcion: "Descripción 3", secuencia: "C", factor: "37" },
+  useEffect(() => {
+    const stored = localStorage.getItem("calificaciones");
+    if (stored) {
+      setData(JSON.parse(stored));
+    } else {
+      localStorage.setItem("calificaciones", JSON.stringify(initialCalificaciones));
+      setData(initialCalificaciones);
+    }
+  }, []);
+
+  const handleAgregar = () => {
+    const nuevo = {
+      id: data.length + 1,
+      ejercicio: 2025,
+      instrumento: "Nuevo Registro Tributario",
+      fechaPago: "2025-11-09",
+      descripcion: "Registro añadido desde el mantenedor.",
+      secuencia: "SEQ-" + (2000 + data.length),
+      ...Object.fromEntries(
+        Array.from({ length: 30 }, (_, j) => [
+          `factor${j + 8}`,
+          (Math.random() * 1.8 + 0.2).toFixed(2),
+        ])
+      ),
+    };
+
+    const updated = [...data, nuevo];
+    setData(updated);
+    localStorage.setItem("calificaciones", JSON.stringify(updated));
+  };
+
+  const handleEliminar = () => {
+    if (data.length === 0) return;
+    const updated = data.slice(0, -1);
+    setData(updated);
+    localStorage.setItem("calificaciones", JSON.stringify(updated));
+  };
+
+
+  const handleLogout = () => {
+    console.log("CERRAR SESIÓN → usuario desconectado");
+    navigate("/login"); 
+  };
+
+  // columnas
+  const columns = [
+    { name: "Ejercicio", selector: (row) => row.ejercicio, width: "100px" },
+    { name: "Instrumento", selector: (row) => row.instrumento, width: "150px" },
+    { name: "Fecha Pago", selector: (row) => row.fechaPago, width: "130px" },
+    { name: "Descripción", selector: (row) => row.descripcion, width: "220px", wrap: true },
+    { name: "Secuencia", selector: (row) => row.secuencia, width: "120px" },
+    ...Array.from({ length: 30 }, (_, i) => ({
+      name: `Factor-${i + 8}`,
+      selector: (row) => row[`factor${i + 8}`],
+      width: "110px",
+    })),
   ];
 
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilters({
-      ...filters,
-      [name]: value,
-    });
-  };
-
-  const handleSearch = () => {
-    console.log("Filtrar por:", filters);
-    // Implementa la lógica para filtrar las filas si es necesario
-  };
-
-  const handleClear = () => {
-    setFilters({ mercado: "", origen: "", periodo: "" });
-    console.log("Filtros limpios");
+  const customStyles = {
+    headCells: {
+      style: {
+        backgroundColor: "var(--fondo)",
+        color: "#000",
+        fontWeight: "bold",
+        borderRight: "1px solid #ccc",
+        whiteSpace: "nowrap",
+      },
+    },
+    cells: {
+      style: {
+        borderRight: "1px solid #ddd",
+        padding: "6px 8px",
+        whiteSpace: "nowrap",
+      },
+    },
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Barra de navegación */}
-      <div className="bg-[#323232] p-4 flex justify-between items-center">
-        <div className="text-white text-xl font-bold">Calificaciones Tributarias</div>
-        <div className="flex items-center text-white">
-          <UserIcon className="h-8 w-8 rounded-full bg-orange-500 text-white" />
-          <button className="ml-4 text-sm">Cerrar sesión</button>
+    <div className="min-h-screen bg-[var(--fondo)] flex flex-col">
+
+      <div className="bg-[#323232] p-4 flex justify-between items-center text-white">
+        <h1 className="font-bold text-lg">Mantenedor de Calificaciones Tributarias</h1>
+
+        <div className="flex items-center gap-2">
+          <UserIcon className="h-6 w-6 text-[var(--nar)]" />
+          <button
+            onClick={handleLogout}
+            className="bg-[var(--nar)] text-black px-3 py-1 rounded font-semibold hover:opacity-90"
+          >
+            Cerrar Sesión
+          </button>
         </div>
       </div>
 
-      <div className="flex p-8 space-x-6">
-        {/* Filtros y botones */}
-        <div className="w-1/3 bg-white p-6 rounded-lg shadow-lg">
-          <h3 className="font-semibold mb-4">Filtros</h3>
-          
-          {/* Filtros de selección */}
-          <div className="space-y-4">
-            <div>
-              <label className="block">Mercado:</label>
-              <select
-                className="w-full p-2 border rounded-md"
-                name="mercado"
-                value={filters.mercado}
-                onChange={handleFilterChange}
-              >
-                <option value="">Seleccione</option>
-                <option value="mercado1">Mercado 1</option>
-                <option value="mercado2">Mercado 2</option>
-              </select>
-            </div>
-            <div>
-              <label className="block">Origen:</label>
-              <select
-                className="w-full p-2 border rounded-md"
-                name="origen"
-                value={filters.origen}
-                onChange={handleFilterChange}
-              >
-                <option value="">Seleccione</option>
-                <option value="origen1">Origen 1</option>
-                <option value="origen2">Origen 2</option>
-              </select>
-            </div>
-            <div>
-              <label className="block">Periodo:</label>
-              <select
-                className="w-full p-2 border rounded-md"
-                name="periodo"
-                value={filters.periodo}
-                onChange={handleFilterChange}
-              >
-                <option value="">Seleccione</option>
-                <option value="2021">2021</option>
-                <option value="2020">2020</option>
-              </select>
-            </div>
-          </div>
+      <div className="flex flex-1 p-6 gap-6">
 
-          {/* Botones */}
-          <div className="space-y-4 mt-6">
-            <button onClick={handleSearch} className="w-full py-2 bg-blue-500 text-white rounded-md">Buscar</button>
-            <button onClick={handleClear} className="w-full py-2 bg-gray-300 text-gray-700 rounded-md">Limpiar</button>
-            <button className="w-full py-2 bg-green-500 text-white rounded-md">Ingresar</button>
-            <button className="w-full py-2 bg-yellow-500 text-white rounded-md">Modificar</button>
-            <button className="w-full py-2 bg-red-500 text-white rounded-md">Eliminar</button>
-          </div>
-        </div>
+        <aside className="w-[220px] bg-white p-4 rounded-lg shadow-md flex flex-col gap-3">
+          <label className="text-sm font-semibold">Mercado:</label>
+          <select className="border p-1 rounded text-sm">
+            <option value="">Seleccionar</option>
+            <option>Primario</option>
+            <option>Secundario</option>
+          </select>
 
-        {/* Tabla */}
-        <div className="flex-1 bg-white p-6 rounded-lg shadow-lg">
-          <table className="w-full table-auto border-collapse">
-            <thead className="bg-[var(--fondo)]">
-              <tr>
-                <th className="p-2 border">Ejercicio</th>
-                <th className="p-2 border">Instrumento</th>
-                <th className="p-2 border">Fecha Pago</th>
-                <th className="p-2 border">Descripción</th>
-                <th className="p-2 border">Secuencia Evento</th>
-                {/* Creando columnas de Factor-08 hasta Factor-37 */}
-                {[...Array(30).keys()].map(i => (
-                  <th key={i} className="p-2 border">{`Factor-${i + 8}`}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row, index) => (
-                <tr key={index} className="odd:bg-gray-100">
-                  <td className="p-2 border">{row.ejercicio}</td>
-                  <td className="p-2 border">{row.instrumento}</td>
-                  <td className="p-2 border">{row.fechaPago}</td>
-                  <td className="p-2 border">{row.descripcion}</td>
-                  <td className="p-2 border">{row.secuencia}</td>
-                  {/* Generando celdas de Factor-08 hasta Factor-37 */}
-                  {[...Array(30).keys()].map(i => (
-                    <td key={i} className="p-2 border">{i + 8 === parseInt(row.factor) ? row.factor : ""}</td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+          <label className="text-sm font-semibold">Origen:</label>
+          <select className="border p-1 rounded text-sm">
+            <option value="">Seleccionar</option>
+            <option>Nacional</option>
+            <option>Internacional</option>
+          </select>
+
+          <label className="text-sm font-semibold">Periodo:</label>
+          <select className="border p-1 rounded text-sm">
+            <option value="">Seleccionar</option>
+            <option>Trimestre 1</option>
+            <option>Trimestre 2</option>
+            <option>Trimestre 3</option>
+            <option>Trimestre 4</option>
+          </select>
+
+          <button className="bg-[var(--nar)] text-white rounded py-1 text-sm mt-2 hover:opacity-90">
+            Buscar
+          </button>
+
+          <button
+            onClick={() => setData(initialCalificaciones)}
+            className="bg-gray-300 rounded py-1 text-sm text-black hover:bg-gray-400"
+          >
+            Limpiar
+          </button>
+
+          <button
+            onClick={handleAgregar}
+            className="bg-green-500 text-white rounded py-1 text-sm hover:bg-green-600"
+          >
+            Ingresar
+          </button>
+
+          <button
+            onClick={() => console.log("Modificar registro...")}
+            className="bg-yellow-500 text-white rounded py-1 text-sm hover:bg-yellow-600"
+          >
+            Modificar
+          </button>
+
+          <button
+            onClick={handleEliminar}
+            className="bg-red-500 text-white rounded py-1 text-sm hover:bg-red-600"
+          >
+            Eliminar
+          </button>
+        </aside>
+
+        {/* la taabla */}
+        <main className="flex-1 bg-white rounded-lg shadow-md p-3 overflow-x-auto">
+          <div className="min-w-max">
+            <DataTable
+              columns={columns}
+              data={data}
+              customStyles={customStyles}
+              dense
+              highlightOnHover
+              fixedHeader
+              pagination={false}
+            />
+          </div>
+        </main>
       </div>
     </div>
   );

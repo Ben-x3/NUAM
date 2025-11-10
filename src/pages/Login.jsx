@@ -65,27 +65,27 @@ export default function Login() {
               <UserIcon className="h-6 w-6" />
             </div>
               
-            {/* Título y formulario */}
+            {/* titulo y formulario */}
             <div className="text-center">
               <h2 className="text-xl font-semibold text-slate-800">Iniciar sesión</h2>
               <p className="text-sm text-slate-500">Usa tus credenciales</p>
             </div>
 
-            {/* Formulario de login */}
+
             <form onSubmit={onLoginSubmit} className="mt-6 space-y-4">
               <input
                 className="w-full rounded border border-slate-300 bg-white px-3 py-2"
                 placeholder="Correo"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}  // Actualiza el estado de email
+                onChange={(e) => setEmail(e.target.value)}  
               />
               <input
                 className="w-full rounded border border-slate-300 bg-white px-3 py-2"
                 placeholder="Contraseña"
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}  // Actualiza el estado de contraseña
+                onChange={(e) => setPassword(e.target.value)}
               />
               <button type="submit" className="w-full rounded bg-[var(--nar)] py-2.5 text-white">
                 Iniciar Sesión

@@ -21,6 +21,7 @@ assets = imagenes
 npm install antd
 
 npm install react-data-table-component
+npm install papaparse
 ---
 COLOCAR ENCIMA DE TODOS los head
 <script src="https://cdn.tailwindcss.com"></script>
